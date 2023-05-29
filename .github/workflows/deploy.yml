@@ -12,6 +12,9 @@ jobs:
 
       - name: load and cache
         uses: ./.github/actions/cached-deps
+        # passing input to our custom action to disable caching
+        with:
+          caching: 'false'
 
       - name: Lint code
         run: npm run lint
@@ -23,6 +26,7 @@ jobs:
 
       - name: load and cache
         uses: ./.github/actions/cached-deps
+
 
       - name: Test code
         id: run-tests

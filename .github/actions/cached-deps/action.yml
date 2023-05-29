@@ -3,11 +3,18 @@ name: Get and Cached
 # actions are not workflows but are used with workflows so they do not need their own trigger
 description: This gets the dependencies and cache's them
 
+inputs:
+  caching:
+    description: 'To cache dependencies or not'
+    required: false
+    default: 'true'
+
 runs:
   using: 'composite'
 
   steps:
     - name: Cache dependencies
+      if: ${{ inputs.caching == 'true' }} # if we want to use caching, this step will be executed, else it'll be skipped
       id: cache
       uses: actions/cache@v3
       with:
@@ -15,7 +22,7 @@ runs:
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
 
     - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true' # if we don't want to use caching
       run: npm ci
       # if there is run, then there must be a shell key which specifies what shell the code is run
       shell: bash
